@@ -37,6 +37,12 @@ const upload = async (req: NextApiRequest, res: NextApiResponse) => {
         res.setHeader('Content-Disposition', `attachment; filename=${fileDb.filename}`);
         await pipeline(file, res);
     } catch(e) {
+        // remove DB entry
+        await prisma.file.delete({
+            where: {
+                id: fileDb.id,
+            },
+        });
         return res.status(400).json({
             message: "File not found",
         });
@@ -45,3 +51,9 @@ const upload = async (req: NextApiRequest, res: NextApiResponse) => {
 };
 
 export default upload;
+
+export const config = {
+    api: {
+      responseLimit: false,
+    },
+  }

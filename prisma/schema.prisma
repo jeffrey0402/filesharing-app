@@ -12,7 +12,7 @@ datasource db {
 
 model File {
     id       String  @id @default(cuid())
-    slug      String?
+    slug     String?
     filename String
     password String?
 }
