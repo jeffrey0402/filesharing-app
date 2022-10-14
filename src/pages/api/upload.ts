@@ -13,12 +13,20 @@ const upload = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   // check if custom url exists
-  console.log(req.query);
   if (url) {
     const searchFile = await prisma.file.findFirst({
       where: {
-        url: url,
+        OR: [
+          {
+            id: url,
+          },
+          {
+            slug: url,
+          }
+        ]
       },
+      
+
     });
     if (searchFile) {
       return res.status(400).json({
@@ -44,7 +52,6 @@ const upload = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     if (!files.file) {
-      console.log(files.file);
       return res.status(400).json({
         status: "fail",
         message: "No file found",
@@ -92,7 +99,7 @@ const upload = async (req: NextApiRequest, res: NextApiResponse) => {
         status: "success",
         message: "File uploaded successfully",
         file: newFile,
-        url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/download/${newFile.id}`,
+        url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/download/${url != null ? (url as string) : newFile.id}`,
       });
     }
   });

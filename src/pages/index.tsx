@@ -49,16 +49,17 @@ const Home: NextPage = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("Success:", data);
-        if(data.status === "success") {
-          setMessage(`Download complete!`);
+        console.log(data);
+        if (data.status === "success") {
+          setMessage(`Upload complete!`);
           setReturnUrl(data.url);
+        } else {
+          setMessage(data.message);
         }
       })
       .catch((error) => {
         setMessage("Error: " + error);
       });
-    
   };
 
   return (
@@ -94,13 +95,13 @@ const Home: NextPage = () => {
             type="text"
             onChange={urlChangeHandler}
           />
-          <label>Password: (optional)</label>
-          <input
+          {/* <label>Password: (optional)</label> */}
+          {/* <input
             className="m-2 rounded-md border-2 border-blue-600 p-2"
             name="password"
             type="text"
             onChange={passwordChangeHandler}
-          />
+          /> */}
           <button
             className="m-2 rounded-md bg-blue-600 py-2 text-white"
             onClick={uploadToServer}
@@ -108,7 +109,31 @@ const Home: NextPage = () => {
             Upload
           </button>
           <p>{message}</p>
-          {returnUrl && <><p>{returnUrl}</p><a href={returnUrl}>Download</a></>}
+          {returnUrl && (
+            <>
+              <input
+                readOnly
+                className="m-2 rounded-md border-2 border-blue-600 p-2"
+                type="text"
+                value={returnUrl}
+              />
+              <button
+                className="m-2 rounded-md bg-blue-600 py-2 text-center text-white"
+                onClick={() => {
+                  navigator.clipboard.writeText(returnUrl);
+                  setMessage("Copied to clipboard!");
+                }}
+              >
+                Copy
+              </button>
+              <a
+                className="m-2 rounded-md bg-blue-600 py-2 text-center text-white"
+                href={returnUrl}
+              >
+                Download
+              </a>
+            </>
+          )}
         </div>
       </main>
     </>
@@ -116,30 +141,3 @@ const Home: NextPage = () => {
 };
 
 export default Home;
-
-// type TechnologyCardProps = {
-//   name: string;
-//   description: string;
-//   documentation: string;
-// };
-
-// const TechnologyCard = ({
-//   name,
-//   description,
-//   documentation,
-// }: TechnologyCardProps) => {
-//   return (
-//     <section className="flex flex-col justify-center rounded border-2 border-gray-500 p-6 shadow-xl duration-500 motion-safe:hover:scale-105">
-//       <h2 className="text-lg text-gray-700">{name}</h2>
-//       <p className="text-sm text-gray-600">{description}</p>
-//       <a
-//         className="m-auto mt-3 w-fit text-sm text-violet-500 underline decoration-dotted underline-offset-2"
-//         href={documentation}
-//         target="_blank"
-//         rel="noreferrer"
-//       >
-//         Documentation
-//       </a>
-//     </section>
-//   );
-// };

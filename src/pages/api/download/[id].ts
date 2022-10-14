@@ -15,8 +15,15 @@ const upload = async (req: NextApiRequest, res: NextApiResponse) => {
     // check if url is custom url
     const fileDb = await prisma.file.findFirst({
         where: {
-            id: id,
-            password: password,
+            OR: [
+                {
+                    slug: id,
+                },
+                {
+                    id: id,
+                    password: password,
+                },
+            ]
         },
     });
     if (!fileDb) {
