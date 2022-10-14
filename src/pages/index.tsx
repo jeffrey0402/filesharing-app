@@ -10,6 +10,7 @@ const Home: NextPage = () => {
   const [customUrl, setCustomeUrl] = useState<string>();
   const [password, setPassword] = useState<string>();
   const [message, setMessage] = useState<string>();
+  const [returnUrl, setReturnUrl] = useState<string>();
 
   const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -30,6 +31,7 @@ const Home: NextPage = () => {
 
   const uploadToServer = () => {
     const formData = new FormData();
+    setReturnUrl("");
     if (!isFilePicked || !selectedFile) {
       setMessage("No file selected");
       return;
@@ -49,7 +51,8 @@ const Home: NextPage = () => {
       .then((data) => {
         console.log("Success:", data);
         if(data.status === "success") {
-          setMessage(`url: ${data.url}`);
+          setMessage(`Download complete!`);
+          setReturnUrl(data.url);
         }
       })
       .catch((error) => {
@@ -79,7 +82,7 @@ const Home: NextPage = () => {
             className="m-2 rounded-md py-2"
             type="file"
             name="file"
-            multiple={true}
+            multiple={false}
             onChange={changeHandler}
           />
           <label>Custom URL: (optional)</label>
@@ -105,6 +108,7 @@ const Home: NextPage = () => {
             Upload
           </button>
           <p>{message}</p>
+          {returnUrl && <><p>{returnUrl}</p><a href={returnUrl}>Download</a></>}
         </div>
       </main>
     </>

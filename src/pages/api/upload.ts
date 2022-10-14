@@ -59,7 +59,7 @@ const upload = async (req: NextApiRequest, res: NextApiResponse) => {
       // create file in db
       const newFile = await prisma.file.create({
         data: {
-          url: url != null ? (url as string) : null,
+          slug: url != null ? (url as string) : null,
           filename: file.originalFilename != null ? file.originalFilename : "",
           password: password != null ? (password as string) : null,
         },
@@ -92,7 +92,7 @@ const upload = async (req: NextApiRequest, res: NextApiResponse) => {
         status: "success",
         message: "File uploaded successfully",
         file: newFile,
-        url: `${process.env.NEXT_PUBLIC_BASE_URL}/${newFile.id}`,
+        url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/download/${newFile.id}`,
       });
     }
   });
