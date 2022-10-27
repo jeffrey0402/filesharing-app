@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
 import formidable from "formidable";
 import fs from "fs";
+import { getServerAuthSession } from "../../server/common/get-server-auth-session";
 
 const prisma = new PrismaClient();
 
@@ -10,6 +11,12 @@ const upload = async (req: NextApiRequest, res: NextApiResponse) => {
   const { url, password } = req.query;
   if (Array.isArray(url) || Array.isArray(password)) {
     return res.status(400).json({ error: "Invalid query params" });
+  }
+
+  // get session data
+  const session = await getServerAuthSession({ req, res });
+  if (!session) {
+    return res.status(401).json({ error: "Unauthorized" });
   }
 
   
@@ -78,6 +85,7 @@ const upload = async (req: NextApiRequest, res: NextApiResponse) => {
           slug: url != null ? (url as string) : null,
           filename: file.originalFilename != null ? file.originalFilename : "",
           password: password != null ? (password as string) : null,
+          userId: session.user?.id,
         },
       });
 
