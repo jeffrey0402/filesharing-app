@@ -95,7 +95,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="container flex min-h-screen flex-col items-center p-4">
+      <main className="flex min-h-screen flex-col items-center p-4">
         <div className="absolute right-2 top-2">
           <button
             className="m-2 rounded-md bg-blue-600 py-2 px-4 text-white"
@@ -107,97 +107,106 @@ const Home: NextPage = () => {
         <h1 className="text-5xl font-extrabold leading-normal text-gray-700 md:text-[5rem]">
           Upload <span className="text-blue-600">A</span> File
         </h1>
-        <div className="flex w-96 flex-col gap-4">
-          <p>Welcome back, <span className="font-medium">{session.data?.user?.name ? session.data?.user?.name : session.data?.user?.email}</span></p>
-          <label htmlFor="file" className="text-2xl text-gray-700">
-            Select File:{" "}
-          </label>
-          <input
-            className=""
-            type="file"
-            name="file"
-            multiple={false}
-            onChange={changeHandler}
-          />
-          <Disclosure>
-            <Disclosure.Button className="flex w-full items-center justify-between rounded-lg bg-blue-100 px-4 py-2 text-left text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75">
-              <span>Advanced Options</span>
-              <ChevronUpIcon className="h-6 ui-open:rotate-180 ui-open:transform" />
-            </Disclosure.Button>
-            <Transition
-              enter="transition duration-100 ease-out"
-              enterFrom="transform scale-95 opacity-0"
-              enterTo="transform scale-100 opacity-100"
-              leave="transition duration-75 ease-out"
-              leaveFrom="transform scale-100 opacity-100"
-              leaveTo="transform scale-95 opacity-0"
-            >
-              <Disclosure.Panel className="text-gray-500">
-                <label>
-                  <span>Custom slug (optional)</span>
-                  <div className="flex place-items-center">
-                    <span className="text-gray-700">
-                      https://files.jeffreyroossien.nl/
-                    </span>
+        <p>
+          Welcome back,{" "}
+          <span className="font-medium">
+            {session.data?.user?.name
+              ? session.data?.user?.name
+              : session.data?.user?.email}
+          </span>
+        </p>
+        <div className="py-2 mt-2 px-8 rounded-xl bg-gray-100">
+          <div className="flex w-96 flex-col gap-4">
+            <label htmlFor="file" className="text-2xl text-gray-700">
+              Select File:{" "}
+            </label>
+            <input
+              className=""
+              type="file"
+              name="file"
+              multiple={false}
+              onChange={changeHandler}
+            />
+            <Disclosure>
+              <Disclosure.Button className="flex w-full items-center justify-between rounded-lg bg-blue-100 px-4 py-2 text-left text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75">
+                <span>Advanced Options</span>
+                <ChevronUpIcon className="h-6 ui-open:rotate-180 ui-open:transform" />
+              </Disclosure.Button>
+              <Transition
+                enter="transition duration-100 ease-out"
+                enterFrom="transform scale-95 opacity-0"
+                enterTo="transform scale-100 opacity-100"
+                leave="transition duration-75 ease-out"
+                leaveFrom="transform scale-100 opacity-100"
+                leaveTo="transform scale-95 opacity-0"
+              >
+                <Disclosure.Panel className="text-gray-500">
+                  <label>
+                    <span>Custom slug (optional)</span>
+                    <div className="flex place-items-center">
+                      <span className="text-gray-700">
+                        https://files.jeffreyroossien.nl/
+                      </span>
+                      <input
+                        autoComplete="off"
+                        className="border:gray-300 w-full rounded-md shadow-sm"
+                        name="slug"
+                        minLength={2}
+                        maxLength={20}
+                        type="text"
+                        onChange={urlChangeHandler}
+                      />
+                    </div>
+                  </label>
+                  <label>
+                    <span>Password: (optional)</span>
                     <input
                       autoComplete="off"
                       className="border:gray-300 w-full rounded-md shadow-sm"
-                      name="slug"
+                      name="password"
                       minLength={2}
                       maxLength={20}
-                      type="text"
-                      onChange={urlChangeHandler}
+                      type="password"
+                      onChange={passwordChangeHandler}
                     />
-                  </div>
-                </label>
-                <label>
-                  <span>Password: (optional)</span>
-                  <input
-                    autoComplete="off"
-                    className="border:gray-300 w-full rounded-md shadow-sm"
-                    name="password"
-                    minLength={2}
-                    maxLength={20}
-                    type="password"
-                    onChange={passwordChangeHandler}
-                  />
-                </label>
-              </Disclosure.Panel>
-            </Transition>
-          </Disclosure>
+                  </label>
+                </Disclosure.Panel>
+              </Transition>
+            </Disclosure>
 
-          <button
-            className="m-2 rounded-md bg-blue-600 py-2 text-white"
-            onClick={uploadToServer}
-          >
-            Upload
-          </button>
-          <p>{message}</p>
-          {returnUrl && (
-            <>
-              <input
-                readOnly
-                className="m-2 rounded-md border-2 border-blue-600 p-2"
-                type="text"
-                value={returnUrl}
-              />
-              <button
-                className="m-2 rounded-md bg-blue-600 py-2 text-center text-white"
-                onClick={() => {
-                  navigator.clipboard.writeText(returnUrl);
-                  setMessage("Copied to clipboard!");
-                }}
-              >
-                Copy
-              </button>
-              <a
-                className="m-2 rounded-md bg-blue-600 py-2 text-center text-white"
-                href={returnUrl}
-              >
-                Download
-              </a>
-            </>
-          )}
+            <button
+              className="m-2 rounded-md bg-blue-600 py-2 text-white"
+              onClick={uploadToServer}
+            >
+              Upload
+            </button>
+            <p>{message}</p>
+            {returnUrl && (
+              <>
+                <input
+                  readOnly
+                  className="m-2 rounded-md border-2 border-blue-600 p-2"
+                  type="text"
+                  value={returnUrl}
+                />
+                <button
+                  className="m-2 rounded-md bg-blue-600 py-2 text-center text-white"
+                  onClick={() => {
+                    navigator.clipboard.writeText(returnUrl);
+                    setMessage("Copied to clipboard!");
+                  }}
+                >
+                  Copy
+                </button>
+                <a
+                  className="m-2 rounded-md bg-blue-600 py-2 text-center text-white"
+                  href={returnUrl}
+                >
+                  Download
+                </a>
+              </>
+            )}
+          </div>
         </div>
       </main>
     </>
