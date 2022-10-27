@@ -19,7 +19,7 @@ const upload = async (req: NextApiRequest, res: NextApiResponse) => {
     if (bannedUrls.includes(url)) {
       return res.status(400).json({ error: "Invalid url" });
     }
-    
+
     const searchFile = await prisma.file.findFirst({
       where: {
         OR: [
@@ -37,6 +37,11 @@ const upload = async (req: NextApiRequest, res: NextApiResponse) => {
         message: "Custom url already exists",
       });
     }
+  }
+
+  // test if temp folder exists
+  if (!fs.existsSync("./temp")) {
+    fs.mkdirSync("./temp");
   }
 
   // parse form
