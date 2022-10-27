@@ -1,11 +1,8 @@
 import type { NextPage } from "next";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
-import { SetStateAction, useState } from "react";
-import { trpc } from "../utils/trpc";
-import { Disclosure, Transition } from "@headlessui/react";
-import { ChevronRightIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
 import FileUpload from "../components/FileUpload";
+import Link from "next/link";
 
 const Home: NextPage = () => {
   const session = useSession();
@@ -58,6 +55,11 @@ const Home: NextPage = () => {
               : session.data?.user?.email}
           </span>
         </p>
+        <Link href="/manage">
+          <a className="border:gray-300 rounded-md bg-blue-600 px-4 py-2 text-white shadow-sm">
+            Manage files
+          </a>
+        </Link>
         <FileUpload />
       </main>
     </>
