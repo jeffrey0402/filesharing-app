@@ -12,8 +12,14 @@ const upload = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(400).json({ error: "Invalid query params" });
   }
 
+  
   // check if custom url exists
   if (url) {
+    const bannedUrls = ["admin", "login", "register", "upload", "api", "index", "files", "file"];
+    if (bannedUrls.includes(url)) {
+      return res.status(400).json({ error: "Invalid url" });
+    }
+    
     const searchFile = await prisma.file.findFirst({
       where: {
         OR: [
@@ -22,11 +28,9 @@ const upload = async (req: NextApiRequest, res: NextApiResponse) => {
           },
           {
             slug: url,
-          }
-        ]
+          },
+        ],
       },
-      
-
     });
     if (searchFile) {
       return res.status(400).json({
@@ -99,7 +103,9 @@ const upload = async (req: NextApiRequest, res: NextApiResponse) => {
         status: "success",
         message: "File uploaded successfully",
         file: newFile,
-        url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/download/${url != null ? (url as string) : newFile.id}`,
+        url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/download/${
+          url != null ? (url as string) : newFile.id
+        }`,
       });
     }
   });
