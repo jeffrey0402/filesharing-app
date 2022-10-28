@@ -8,17 +8,16 @@ import { trpc } from "../utils/trpc";
 const Manage: NextPage = () => {
   // Prompt user login
   const session = useSession();
-  // Prompt user login
+  // get all files from server
+  const filesQuery = trpc.file.filesFromUser.useQuery(
+    session.data?.user?.id ? session.data?.user?.id : "loading"
+  );
   if (!session.data && session.status !== "loading") {
     return <SignIn />;
   } else if (session.status === "loading") {
     return <Spinner />;
   }
 
-  // get all files from server
-  const filesQuery = trpc.file.filesFromUser.useQuery(
-    session.data?.user?.id ? session.data?.user?.id : "123"
-  );
 
   return (
     <main className="flex min-h-screen flex-col items-center p-4">
@@ -67,7 +66,7 @@ const Manage: NextPage = () => {
               <th className="border border-blue-700 font-normal">
                 <a
                   className="border:gray-300 rounded-md bg-blue-600 px-4 py-2 text-white shadow-sm"
-                  href={file.slug ? file.slug : file.id}
+                  href={"api/download/" + (file.slug ? file.slug : file.id)}
                 >
                   Download
                 </a>
