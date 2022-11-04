@@ -14,10 +14,13 @@ const Manage: NextPage = () => {
   );
   if (!session.data && session.status !== "loading") {
     return <SignIn />;
-  } else if (session.status === "loading") {
+  } else if (
+    session.status === "loading" ||
+    filesQuery.status == "loading" ||
+    !filesQuery.data
+  ) {
     return <Spinner />;
   }
-
 
   return (
     <main className="flex min-h-screen flex-col items-center p-4">
@@ -45,51 +48,63 @@ const Manage: NextPage = () => {
           Home
         </a>
       </Link>
-      <table className="mt-2 table-auto border-collapse">
-        <thead className="bg-blue-600 text-white">
-          <tr>
-            <th className="border border-blue-600">File name</th>
-            <th className="border border-blue-600">expiration date</th>
-            <th className="border border-blue-600">download</th>
-            <th className="border border-blue-600">Delete</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filesQuery.data?.map((file) => (
-            <tr key={file.id} className="bg-blue-100 text-black">
-              <th className="border border-blue-700 font-normal">
-                {file.filename}
-              </th>
-              <th className="border border-blue-700 font-normal">
-                {file.expirationDate?.toDateString()}
-              </th>
-              <th className="border border-blue-700 font-normal">
-                <a
-                  className="border:gray-300 rounded-md bg-blue-600 px-4 py-2 text-white shadow-sm"
-                  href={"api/download/" + (file.slug ? file.slug : file.id)}
-                >
-                  Download
-                </a>
-              </th>
-              <th className="border border-blue-700 font-normal">
-                <DeleteFile id={file.id} />
-              </th>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {filesQuery.data?.length > 0 ? (
+        <>
+          <table className="mt-2 table-auto border-collapse">
+            <thead className="bg-blue-600 text-white">
+              <tr>
+                <th className="border border-blue-600">id / slug</th>
+                <th className="border border-blue-600">File name</th>
+                <th className="border border-blue-600">expiration date</th>
+                <th className="border border-blue-600">download</th>
+                <th className="border border-blue-600">Delete</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filesQuery.data?.map((file) => (
+                <tr key={file.id} className="bg-blue-100 text-black">
+                  <td className="border border-blue-600">
+                    {file.slug ? file.slug : file.id}
+                  </td>
+                  <td className="border border-blue-700 font-normal">
+                    {file.filename}
+                  </td>
+                  <td className="border border-blue-700 font-normal">
+                    {file.expirationDate?.toDateString()}
+                  </td>
+                  <td className="border border-blue-700 font-normal">
+                    <a
+                      className="border:gray-300 rounded-md bg-blue-600 px-4 py-2 text-white shadow-sm"
+                      href={"api/download/" + (file.slug ? file.slug : file.id)}
+                    >
+                      Download
+                    </a>
+                  </td>
+                  <td className="border border-blue-700 font-normal">
+                    <DeleteFile id={file.id} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
+      ) : (
+        <p className="mt-2">No files uploaded! Upload files on the upload page.</p>
+      )}
     </main>
   );
 };
 
 const DeleteFile: React.FC<{ id: string }> = ({ id }) => {
   const utils = trpc.useContext();
-  const deleteFile = (id: string) => {
-    const success = trpc.file.delete.useQuery(id);
-    if (success) {
-      // invalidate the query
-      utils.file.filesFromUser.invalidate();
+  const mutation = trpc.file.delete.useMutation();
+
+  const deleteFile = async (id: string) => {
+    await mutation.mutateAsync(id);
+    if (mutation.isError) {
+      alert(mutation.error);
     }
+    utils.file.filesFromUser.invalidate();
   };
   return (
     <button

@@ -87,7 +87,7 @@ const FileUpload: React.FC = () => {
               leaveFrom="transform scale-100 opacity-100"
               leaveTo="transform scale-95 opacity-0"
             >
-              <Disclosure.Panel className="text-gray-500">
+              <Disclosure.Panel className="text-gray-500 p-2">
                 <label>
                   <span>Custom slug (optional)</span>
                   <div className="flex place-items-center">
